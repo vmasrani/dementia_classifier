@@ -5,7 +5,7 @@ import itertools
 from sklearn.model_selection import GroupKFold
 from sklearn.utils import shuffle
 from dementia_classifier.feature_extraction.feature_sets import feature_set_list
-
+from dementia_classifier.settings import SQL_DBANK_TEXT_FEATURES, SQL_DBANK_DIAGNOSIS, SQL_DBANK_DEMOGRAPHIC, SQL_DBANK_ACOUSTIC_FEATURES, SQL_DBANK_DISCOURSE_FEATURES
 # --------MySql---------
 from dementia_classifier import db
 cnx = db.get_connection()
@@ -37,11 +37,11 @@ DEMENTIA_BLOGS = ["creatingmemories", "living-with-alzhiemers", "parkblog-silver
 def get_data(diagnosis=ALZHEIMERS + CONTROL, drop_features=None, polynomial_terms=None):
 
     # Read from sql
-    text = pd.read_sql_table("dementiabank_text_features", cnx)
-    demo = pd.read_sql_table("dementiabank_demographic", cnx)
-    diag = pd.read_sql_table("dementiabank_diagnosis", cnx)
-    disc = pd.read_sql_table("dementiabank_discourse_features", cnx)
-    acoustic = pd.read_sql_table("dementiabank_acoustic_features", cnx)
+    text = pd.read_sql_table(SQL_DBANK_TEXT_FEATURES, cnx)
+    demo = pd.read_sql_table(SQL_DBANK_DEMOGRAPHIC, cnx)
+    diag = pd.read_sql_table(SQL_DBANK_DIAGNOSIS, cnx)
+    disc = pd.read_sql_table(SQL_DBANK_DISCOURSE_FEATURES, cnx)
+    acoustic = pd.read_sql_table(SQL_DBANK_ACOUSTIC_FEATURES, cnx)
 
     # Add diagnosis
     diag = diag[diag['diagnosis'].isin(diagnosis)]
@@ -152,9 +152,9 @@ def get_blog_data(keep_only_good=True, random=20, drop_features=None):
 
     # Remove recent posts (e.g. after paper was published)
     qual['date'] = pd.to_datetime(qual.date)
-    qual = qual[qual.date < cutoff_date] 
+    qual = qual[qual.date < cutoff_date]
 
-    # keep only good blog posts 
+    # keep only good blog posts
     if keep_only_good:
         qual = qual[qual.quality == 'good']
 
@@ -175,7 +175,6 @@ def get_blog_data(keep_only_good=True, random=20, drop_features=None):
 
     if drop_features:
         X = X.drop(drop_features, axis=1, errors='ignore')
-
 
     X = X.apply(pd.to_numeric, errors='ignore')
     X.index = labels
@@ -204,96 +203,4 @@ def get_blog_scatterplot_data(keep_only_good=True, random=20):
     data.date = pd.to_datetime(data.date)
 
     return data
-
-
-# =================================================================
-# ------------------------ Read Results----------------------------
-# =================================================================
-def get_max_fold(df):
-    max_k = df.mean().argmax()
-    df = df[max_k].to_frame()
-    df.columns = ['folds']
-    df['max_k'] = int(max_k)
-    return df.reset_index(drop=True)
-
-
-# Returns 10 folds for best k (k= number of features)
-def get_da_results(classifier_name, domain_adapt_method, metric):
-    name = "results_domain_adaptation_%s_10fold" % classifier_name 
-    table = pd.read_sql_table(name, cnx, index_col='index')
-    table = table[(table.metric == metric) & (table.method == domain_adapt_method)].dropna(axis=1)
-    df = get_max_fold(table)
-    df['model'] = classifier_name
-    df['method'] = domain_adapt_method
-    return df
-
-
-def get_ablation_results(ablation_set, model, metric):
-    reference = "results_ablation_none"
-
-    ref = pd.read_sql_table(reference, cnx, index_col='index')
-    ref = ref[(ref.metric == metric) & (ref.model == model)].dropna(axis=1)
-    
-    max_ref_k = ref.mean().argmax()
-    ref = ref[max_ref_k].to_frame().reset_index(drop=True)
-    ref.columns = ['folds']
-
-    # abl == ablated 
-    name = "results_ablation_%s" % ablation_set 
-    abl = pd.read_sql_table(name, cnx, index_col='index')
-    abl = abl[(abl.metric == metric) & (abl.model == model)].dropna(axis=1)
-
-    max_abl_k = abl.mean().argmax()
-    abl = abl[max_abl_k].to_frame().reset_index(drop=True)
-    abl.columns = ['folds']
-
-    # Difference from reference
-    diff = abl['folds'].mean() - ref['folds'].mean()
-    diff = pd.DataFrame([diff * 100.0], columns=['folds'])
-    diff['model'] = model
-    diff['metric'] = metric
-    diff['ablation_set'] = ablation_set
-    
-    return diff
-
-
-def get_new_feature_results(new_feature_set, model, metric):
-    reference = "results_new_features_none"
-
-    ref = pd.read_sql_table(reference, cnx, index_col='index')
-    ref = ref[(ref.metric == metric) & (ref.model == model)].dropna(axis=1)
-    
-    max_ref_k = ref.mean().argmax()
-    ref = ref[max_ref_k].to_frame().reset_index(drop=True)
-    ref.columns = ['folds']
-
-    # nfs == new feature set 
-    name = "results_new_features_%s" % new_feature_set 
-    nfs = pd.read_sql_table(name, cnx, index_col='index')
-    nfs = nfs[(nfs.metric == metric) & (nfs.model == model)].dropna(axis=1)
-
-    max_nfs_k = nfs.mean().argmax()
-    nfs = nfs[max_nfs_k].to_frame().reset_index(drop=True)
-    nfs.columns = ['folds']
-
-    # Difference from reference
-    diff = nfs['folds'].mean() - ref['folds'].mean()
-    diff = pd.DataFrame([diff * 100.0], columns=['folds'])
-    diff['model'] = model
-    diff['metric'] = metric
-    diff['new_feature_set'] = new_feature_set
-    
-    return diff
-
-
-def get_blog_results(model, metric):
-    name = "results_blog"
-    table = pd.read_sql_table(name, cnx, index_col='index')
-    table = table[(table.metric == metric) & (table.model == model)].dropna(axis=1)
-    max_k = table.mean().argmax()
-    df = table[max_k].to_frame()
-    df.columns = ['folds']
-    df['model'] = model
-    df['metric'] = metric
-    return df
 

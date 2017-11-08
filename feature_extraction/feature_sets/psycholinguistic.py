@@ -636,9 +636,9 @@ def get_SW_keyword_set():
     return GIRL + STOOL + FALL + CUPBOARD + KITCHEN
 
 
-# -------------------------------------
-# LS/RS switch
-# -------------------------------------
+# # -------------------------------------
+# # LS/RS switch
+# # -------------------------------------
 def count_ls_rs_switches(interview):
     leftside  = get_leftside_keyword_set()
     rightside = get_rightside_keyword_set()
@@ -785,7 +785,7 @@ def get_spatial_features(interview, photo_split):
         feat_dict["prcnt_rs_uttered"] = percentage_of_general_keywords_mentioned(
             interview, rightside_keywords)
 
-        feat_dict["count_ls_rs_switches"] = count_ls_rs_switches(interview)
+        # feat_dict["count_ls_rs_switches"] = count_ls_rs_switches(interview)
         return feat_dict
 
     if photo_split == 'strips':

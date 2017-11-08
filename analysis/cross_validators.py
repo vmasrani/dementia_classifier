@@ -1,6 +1,5 @@
 import numpy as np
-# import pandas as pd
-
+import pandas as pd
 from scipy import stats
 from dementia_classifier.analysis import util
 from sklearn.utils import shuffle
@@ -31,8 +30,10 @@ class DementiaCV(object):
         self.X = X
         self.y = y
         self.labels = labels
+        self.columns = X.columns
 
         self.methods = ['default']
+        self.nfolds = 10
 
         # Results
         self.silent = silent
@@ -45,7 +46,10 @@ class DementiaCV(object):
 
     def get_data_folds(self, fold_type='default'):
         X, y, labels = self.X, self.y, self.labels
-        group_kfold = GroupKFold(n_splits=10).split(X, y, groups=labels)
+        if X is None or y is None:
+            raise ValueError("X or y is None")
+
+        group_kfold = GroupKFold(n_splits=self.nfolds).split(X, y, groups=labels)
         data = []
         for train_index, test_index in group_kfold:
             fold = {}
@@ -77,12 +81,16 @@ class DementiaCV(object):
 
             acc_scores = []
             fms_scores = []
+            if y_test.all():
+                print "All values in y_test are the same in fold %i, ROC not defined." % idx
             roc_scores = []
 
             nfeats = X_train.shape[1]
             feats = util.get_top_pearson_features(X_train, y_train, nfeats)
             if k_range is None:
                 k_range = range(1, nfeats)
+            if k_range[0] == 0:
+                raise ValueError("k_range cannot start with 0")
             for k in k_range:
                 indices = feats[:k]
                 # Select k features
@@ -98,13 +106,10 @@ class DementiaCV(object):
                 # Save
                 acc_scores.append(accuracy_score(y_test, yhat))
                 fms_scores.append(f1_score(y_test, yhat))
-                try:
-                    roc_scores.append(roc_auc_score(y_test, yhat_probs[:, 1]))
-                except Exception as e:
-                    print e.message, e.args
-                    print "Filling w/ Nan"
+                if y_test.all():
                     roc_scores.append(np.nan)
-
+                else:
+                    roc_scores.append(roc_auc_score(y_test, yhat_probs[:, 1]))
             # ----- save fold -----
             acc.append(acc_scores)
             fms.append(fms_scores)
@@ -127,6 +132,26 @@ class DementiaCV(object):
 
         return self
 
+    def feature_rank(self, method='default', thresh=50):
+        nfeats = self.columns.shape[0]
+        nfolds = self.nfolds
+        feat_scores = pd.DataFrame(np.zeros([nfeats, nfolds]), columns=range(nfolds), index=self.columns)
+
+        for fold_idx, fold in enumerate(self.get_data_folds(method)):
+            X_train, y_train = fold["X_train"], fold["y_train"].ravel()  # Ravel flattens a (n,1) array into (n, )
+            ranked_features = util.get_top_pearson_features(X_train, y_train, nfeats)
+            for rank, feat_idx in enumerate(ranked_features[:thresh]):
+                feature = self.columns[feat_idx]
+                weight = (thresh - rank) / float(thresh)
+                feat_scores[fold_idx].ix[feature] = weight
+
+        # Drop rows with all zeros
+        df = feat_scores[(feat_scores.T != 0).any()]
+        df = df.stack().reset_index()
+        df.columns = ['feature', 'fold', 'weight']
+        
+        return df
+
 
 class DomainAdaptationCV(DementiaCV):
     """Subclass of DementiaCV where the six domain adaptation methods 
@@ -134,7 +159,7 @@ class DomainAdaptationCV(DementiaCV):
     """
 
     def __init__(self, model, Xt, yt, Xs, ys, silent=False, random_state=1):
-        super(DomainAdaptationCV, self).__init__(model, silent=silent)
+        super(DomainAdaptationCV, self).__init__(model, X=Xt, y=yt, silent=silent)
         self.silent = silent
         self.Xt, self.yt = Xt, yt  # Save target data + labels
         self.Xs, self.ys = Xs, ys  # Save source data + labels

@@ -4,7 +4,7 @@ from itertools import chain
 from dementia_classifier.feature_extraction.feature_sets import pos_phrases, pos_syntactic, psycholinguistic, acoustic, discourse
 from dementia_classifier.preprocess import get_data
 from dementia_classifier import settings
-
+from dementia_classifier.settings import SQL_DBANK_TEXT_FEATURES, SQL_DBANK_DIAGNOSIS, SQL_DBANK_DEMOGRAPHIC, SQL_DBANK_ACOUSTIC_FEATURES, SQL_DBANK_DISCOURSE_FEATURES
 # ======================
 # setup mysql connection
 # ----------------------
@@ -40,7 +40,7 @@ def save_dementiabank_text_features():
     feat_df = pd.DataFrame(frames)
 
     # Save to database
-    feat_df.to_sql("dementiabank_text_features", cnx, if_exists='replace', index=False)
+    feat_df.to_sql(SQL_DBANK_TEXT_FEATURES, cnx, if_exists='replace', index=False)
 
 
 def debug():
@@ -51,7 +51,7 @@ def debug():
 
 def save_diagnosis():
     diagnosis = pd.read_csv(settings.DBANK_DIAGNOSIS, sep=' ')
-    diagnosis.to_sql("dementiabank_diagnosis", cnx, if_exists='replace', index=False)
+    diagnosis.to_sql(SQL_DBANK_DIAGNOSIS, cnx, if_exists='replace', index=False)
 
 
 def save_demographic():
@@ -65,7 +65,7 @@ def save_demographic():
     female      = demographic[demographic['gender'] == 'female'].fillna(female_avg)
     
     demographic = pd.concat([male, female])
-    demographic.to_sql("dementiabank_demographic", cnx, if_exists='replace', index=False)
+    demographic.to_sql(SQL_DBANK_DEMOGRAPHIC, cnx, if_exists='replace', index=False)
 
     
 def save_acoustic():
@@ -85,7 +85,7 @@ def save_acoustic():
     feat_df.reset_index(inplace=True)
 
     # Save to sql
-    feat_df.to_sql("dementiabank_acoustic_features", cnx, if_exists='replace', index=False)
+    feat_df.to_sql(SQL_DBANK_ACOUSTIC_FEATURES, cnx, if_exists='replace', index=False)
 
 
 def save_discourse():
@@ -105,7 +105,7 @@ def save_discourse():
     feat_df['interview'] = feat_df['interview'] + 'c'  # So it's consistent with sound files
 
     # Save to sql
-    feat_df.to_sql("dementiabank_discourse_features", cnx, if_exists='replace', index=False)
+    feat_df.to_sql(SQL_DBANK_DISCOURSE_FEATURES, cnx, if_exists='replace', index=False)
 
 
 def save_all_to_sql():

@@ -3,7 +3,7 @@ import pandas as pd
 from itertools import chain
 from dementia_classifier.feature_extraction.feature_sets import pos_phrases, pos_syntactic, psycholinguistic, acoustic, discourse
 from dementia_classifier.preprocess import get_data
-
+from dementia_classifier.settings import SQL_BLOG_SUFFIX, SQL_BLOG_QUALITY
 # ======================
 # setup mysql connection
 # ----------------------
@@ -52,7 +52,7 @@ def save_all_blogs():
     for blog in data:
         print 'Processing %s' % blog
         name = get_blog_name(blog)
-        sqlname = "%s_text_features" % name
+        sqlname = "%s_%s" % (name, SQL_BLOG_SUFFIX)
         if not in_database(sqlname):
             posts = process_blog(data[blog], name)
             df = pd.DataFrame(posts)
@@ -64,14 +64,10 @@ def save_blog_quality():
     df = pd.DataFrame(qual)
     # Fix blog name
     df['blog'] = df['blog'].apply(get_blog_name)
-    df.to_sql("blog_quality", cnx, if_exists='replace', index=False)
+    df.to_sql(SQL_BLOG_QUALITY, cnx, if_exists='replace', index=False)
 
 
 def save_blog_data():
     save_all_blogs()
     save_blog_quality()
 
-
-
-if __name__ == '__main__':
-    import pdb; pdb.set_trace()

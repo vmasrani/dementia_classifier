@@ -1,3 +1,4 @@
+import itertools
 
 
 def cfg_features():
@@ -404,12 +405,12 @@ def demographic_features():
     ]
 
 
-def leftside_keyword_features():
+def leftSide_keyword_features():
     return [
         "ls_count",
         "ls_kw_to_w_ratio",
         "ls_ty_to_tok_ratio",
-        "prcnt_ls_uttered",
+        "Right_ls_uttered",
     ]
 
 
@@ -556,22 +557,114 @@ def new_features():
     new += halves_features()
     new += strips_features()
     new += quadrant_features()
-    return new 
+    return new
+
+
+def make_polynomial_names(cols):
+    names = []
+    for f1, f2 in itertools.combinations_with_replacement(cols, 2):
+        if f1 == f2:
+            prefix = 'sqr_'
+        else:
+            prefix = 'intr_'
+        name = prefix + f1 + "_" + f2
+        names += [name]
+
+    return names + cols
+
+
+def human_readable_map():
+    hr_map = {
+        'ADVP'                      : 'ADVP',
+        'AvgPPTypeLengthEmbedded'   : 'AvgPPTypeLengthEmbedded',
+        'AvgPPTypeLengthNonEmbedded': 'AvgPPTypeLengthNonEmbedded',
+        'AvgVPTypeLengthEmbedded'   : 'AvgVPTypeLengthEmbedded',
+        'AvgVPTypeLengthNonEmbedded': 'AvgVPTypeLengthNonEmbedded',
+        'CN_T'                      : 'Complex nominal per T-unit',
+        'CN_C'                      : 'Complex nominal per Clause',
+        'CT_T'                      : 'Complex T-unit ratio',
+        'VP_T'                      : 'Verb Phrase per T-unit',
+        'DP_T'                      : 'Dependent clauses per T-unit',
+        'DP_C'                      : 'Dependent clauses per Clause',
+        'C_S'                       : 'Clause per sentence',
+        'C_T'                       : 'Clause per T-unit',
+        'DC_T'                      : 'Dependent clause per T-unit',
+        'INTJ'                      : 'INTJ',
+        'INTJ_to_UH'                : 'INTJ_to_UH',
+        'MLS'                       : 'Mean length of sentence',
+        'MLT'                       : 'Mean length of T-unit',
+        'MLT'                       : 'Mean length of Clauses',
+        'MeanWordLength'            : 'MeanWordLength',
+        'NP_to_DT_NN'               : 'NounPhrase_to_DT_NN',
+        'NP_to_PRP'                 : 'NounPhrase_to_PersonalPronoun',
+        'NumAdverbs'                : 'NumAdverbs',
+        'NumDeterminers'            : 'NumDeterminers',
+        'NumInflectedVerbs'         : 'NumInflectedVerbs',
+        'NumNouns'                  : 'NumNouns',
+        'NumSubordinateConjunctions': 'NumSubordinateConjunctions',
+        'PP'                        : 'PP',
+        'PPTypeRate'                : 'PPTypeRate',
+        'PProportion'               : 'PProportion',
+        'RatioCoordinate'           : 'RatioCoordinate',
+        'RatioPronoun'              : 'RatioPronoun',
+        'S'                         : 'Number of Sentences',
+        'T'                         : 'Number of T-Units',
+        'W'                         : 'Number of Words',
+        'C'                         : 'Number of Clauses',
+        'CN'                        : 'Number of Complex Nominals',
+        'CP'                        : 'Number of Coordinate Phrases',
+        'VPProportion'              : 'VPProportion',
+        'avg_cos_dist'              : 'Average cosine distance between utterances',
+        'binaryIUActionStoolFalling'       : 'InfoUnit (Boolean): ActionStoolFalling',
+        'binaryIUActionWomanDryingWashing' : 'InfoUnit (Boolean): ActionWomanDryingWashing',
+        'binaryIUObjectCookie'             : 'InfoUnit (Boolean): ObjectCookie',
+        'binaryIUObjectCurtains'           : 'InfoUnit (Boolean): ObjectCurtains',
+        'binaryIUObjectDishes'             : 'InfoUnit (Boolean): ObjectDishes',
+        'binaryIUObjectSink'               : 'InfoUnit (Boolean): ObjectSink',
+        'binaryIUObjectStool'              : 'InfoUnit (Boolean): ObjectStool',
+        'binaryIUObjectWindow'             : 'InfoUnit (Boolean): ObjectWindow',
+        'binaryIUPlaceExterior'            : 'InfoUnit (Boolean): PlaceExterior',
+        'binaryIUSubjectGirl'              : 'InfoUnit (Boolean): SubjectGirl',
+        'binaryIUSubjectWoman'             : 'InfoUnit (Boolean): SubjectWoman',
+        'getConcretenessScore'             : 'Concreteness Score',
+        'getFamiliarityScore'              : 'Familiarity Score',
+        'getImagabilityScore'              : 'Imagability Score',
+        'getSUBTLWordScores'               : 'SUBTLWord Scores',
+        'keywordIUActionStoolFalling'      : 'InfoUnit (Count): ActionStoolFalling',
+        'keywordIUActionWomanDryingWashing': 'InfoUnit (Count): ActionWomanDryingWashing',
+        'keywordIUObjectCookie'            : 'InfoUnit (Count): ObjectCookie',
+        'keywordIUObjectCurtains'          : 'InfoUnit (Count): ObjectCurtains',
+        'keywordIUObjectSink'              : 'InfoUnit (Count): ObjectSink',
+        'keywordIUObjectWindow'            : 'InfoUnit (Count): ObjectWindow',
+        'keywordIUPlaceExterior'           : 'InfoUnit (Count): PlaceExterior',
+        'keywordIUSubjectWoman'            : 'InfoUnit (Count): SubjectWoman',
+        'proportion_below_threshold_0.3'   : 'proportion of utterance pairs w/ cosine sim < .3',
+        'ls_count'                         : 'Count(LeftSide InfoUnit)',
+        'ls_kw_to_w_ratio'                 : 'Count(LeftSide)/AllWordsUttered',
+        'ls_ty_to_tok_ratio'               : 'Unique(LeftSide)/Count(LeftSide)',
+        'prcnt_ls_uttered'                 : 'Unique(LeftSide)/AllLeftSideInfoUnits',
+        'prcnt_rs_uttered'                 : 'Unique(RightSide)/AllRightSideInfoUnits',
+        'rs_count'                         : 'Count(RightSide InfoUnit)',
+        'rs_kw_to_w_ratio'                 : 'Count(RightSide)/AllWordsUttered',
+        'rs_ty_to_tok_ratio'               : 'Unique(RightSide)/Count(RightSide)',
+        'count_ls_rs_switches'             : 'Number of switches from LS to RS',
+    }
+    return hr_map
 
 
 def all_groups():
     groups = {}
-    groups["cfg"]                  = cfg_features()
+    groups["cfg"] = cfg_features()
+    groups["acoustics"] = acoustics_features()
+    groups["demographic"] = demographic_features()
+    groups["repetitiveness"] = repetitiveness_features()
+    groups["parts_of_speech"]  = parts_of_speech_features()
+    groups["psycholinguistic"] = psycholinguistic_features()
     groups["syntactic_complexity"] = syntactic_complexity_features()
-    groups["psycholinguistic"]     = psycholinguistic_features()
     groups["vocabulary_richness"]  = vocabulary_richness_features()
-    groups["repetitiveness"]       = repetitiveness_features()
-    groups["acoustics"]            = acoustics_features()
-    groups["discourse"]            = discourse_features()
-    groups["parts_of_speech"]      = parts_of_speech_features()
-    groups["demographic"]          = demographic_features()
     groups["information_content"]  = information_content_features()
-    groups['halves_features']      = halves_features()
-    groups['strips_features']      = strips_features()
-    groups['quadrant_features']    = quadrant_features()
+    groups["discourse"] = make_polynomial_names(discourse_features())
+    groups['halves']    = make_polynomial_names(halves_features())
+    groups['strips']    = make_polynomial_names(strips_features())
+    groups['quadrant']  = make_polynomial_names(quadrant_features())
     return groups

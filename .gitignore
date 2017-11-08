@@ -1,2 +1,5 @@
-get_data/data
+data
+plots
+lib
 .DS_Store
+*.pyc
