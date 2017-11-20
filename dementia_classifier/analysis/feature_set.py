@@ -157,13 +157,14 @@ def ablation_plot(metric='acc'):
         'x_label': 'Feature Set',
         'y_label': "%% change in %s" % metric,
         'figsize': (10, 8),
-        'fontsize': 14,
+        'fontsize': 20,
+        'font_scale': 1.2,
         'y_lim': None,
         'errwidth': 0.75,
         'labelsize': 10,
         'rotation': 15
     }
-
+    
     figname = 'ablation_plot_%s.png' % metric
 
     bar_plot(dfs, figname, **plot_specs)

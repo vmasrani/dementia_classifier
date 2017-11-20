@@ -30,8 +30,8 @@ def colormap():
         new_features = models.NEW_FEATURE_SETS
         metrics      = models.METRICS
 
-        p1 = sns.xkcd_palette(["brick", "steel blue", "moss green", "dusty rose", "grape", "pale orange", "deep pink"]) 
-        p2 = sns.xkcd_palette(["purple", "green", "blue", "pink", "brown", "light blue", "grey", "orange", "tan"]) 
+        p1 = sns.xkcd_palette(["brick", "steel blue", "moss green", "dusty rose", "grape", "pale orange", "deep pink"])
+        p2 = sns.xkcd_palette(["purple", "green", "blue", "pink", "brown", "light blue", "grey", "orange", "tan"])
         p3 = sns.husl_palette(len(new_features), h=0.3)
         p4 = sns.xkcd_palette(["windows blue", "faded green", "dusty purple"])
 
@@ -98,9 +98,13 @@ def bar_plot(dfs, figname, **kwargs):
 
 def feature_selection_plot(dfs, metric, figname='feature_selection.png', show=False):
     plt.figure(figsize=(12, 8))
-    ax = sns.tsplot(data=dfs, time="number_of_features", value=metric, color=colormap(), unit="folds", condition='model')
+    ax = sns.tsplot(data=dfs, time="number_of_features", value=metric, ci=90, color=colormap(), unit="folds", condition='model')
     fig = ax.get_figure()
     ax.figure.tight_layout()
+    ax.set_xlabel("Number of Features", fontsize=20)
+    ax.set_ylabel(metric, fontsize=20)
+    ax.tick_params(labelsize=20)
+
     if show:
         plt.show()
     else:
@@ -236,11 +240,14 @@ def map_feature_to_group(feature):
             return group_name
 
 # Change some features, allow rest to pass through
+
+
 def make_human_readable_features(feature):
     if feature in HUMAN_READABLE_MAP:
         return HUMAN_READABLE_MAP[feature]
     else:
         return feature
+
 
 def get_number_of_features_in_group(group):
     return len(FEATURE_GROUP_MAP[group])

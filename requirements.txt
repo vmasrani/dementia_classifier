@@ -1,0 +1,12 @@
+SQLAlchemy==1.1.11
+requests==2.18.1
+seaborn==0.8.1
+nltk==3.2.4
+pandas==0.20.2
+Unidecode==0.04.20
+matplotlib==2.0.2
+scipy==0.19.1
+numpy==1.13.3
+beautifulsoup4==4.6.0
+features==0.5.8
+scikit_learn==0.19.1

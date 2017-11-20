@@ -78,8 +78,6 @@ def get_feature_rankings(dataset='halves', polynomial_terms=False):
     return feature_ranks
 
 
-
-
 def get_feature_selection_curve(model, metric, table_name="results_new_features_none"):
     df = pd.read_sql_table(table_name, cnx, index_col='index')
     df = df[(df.metric == metric) & (df.model == model)].dropna(axis=1)
@@ -117,6 +115,8 @@ def vanilla_feature_set_plot(show=False):
         'x_label': 'Model',
         'y_label': 'Metric',
         'figsize': (12, 10),
+        'font_scale': 1.2,
+        'fontsize': 20,
         'y_lim': None,
         'show': show,
         'title': "10-Fold Cross Validation Performance"
@@ -139,10 +139,11 @@ def plot_feature_rank(dataset, show=False):
         'order': order,
         'dodge': False,
         'labelsize': 5,
+        'font_scale': 1.2,
+        'fontsize': 20,
         'show': show,
         'y_lim': None,
         'capsize': .2,
-
     }
 
     figname = 'feature_rank_%s.png' % dataset

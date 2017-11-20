@@ -94,6 +94,8 @@ def domain_adaptation_plot_helper(classifiers, metric='acc'):
         'hue_col': 'model',
         'x_label': 'Model',
         'figsize': (10, 8),
+        'font_scale': 1.2,
+        'fontsize': 20,
         'y_label': metric,
         'y_lim': (0, 1)
     }

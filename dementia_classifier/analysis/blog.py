@@ -120,6 +120,8 @@ def blog_plot():
         'hue_col': 'metric',
         'x_label': 'Model',
         'y_label': 'Performance',
+        'font_scale': 1.2,
+        'fontsize': 20,
     }
 
     figname = 'blog_plot.png'
@@ -147,11 +149,14 @@ def feature_box_plot(feature, trim_zeros=False):
     
     sns.set_style('whitegrid')
 
-    plt.figure(figsize=(10,8))
+    plt.figure(figsize=(10, 8))
     plt.xticks(rotation=25)
     ax  = sns.boxplot(x='blog', y=feature, data=df, linewidth=.75)
     fig = ax.get_figure()
-    ax.set(xlabel="Blogs", ylabel=feature)
+    ax.set_xlabel("Blogs", fontsize=20)
+    ax.set_ylabel(feature, fontsize=20)
+    ax.tick_params(labelsize=20)
+
     fig.tight_layout()
     figname = 'blog_boxplot_%s.png' % feature
     fig.savefig(PLOT_PATH + figname)

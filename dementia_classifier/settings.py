@@ -1,21 +1,21 @@
 import os
 
 # Data paths
-SOUNDFILE_CONTROL_DATA_PATH  = 'dementia_classifier/data/soundfiles/control/'
-SOUNDFILE_DEMENTIA_DATA_PATH = 'dementia_classifier/data/soundfiles/dementia/'
+SOUNDFILE_CONTROL_DATA_PATH  = 'data/soundfiles/control/'
+SOUNDFILE_DEMENTIA_DATA_PATH = 'data/soundfiles/dementia/'
 
-DISCOURSE_CONTROL_DATA_PATH  = 'dementia_classifier/data/discourse_trees/control/'
-DISCOURSE_DEMENTIA_DATA_PATH = 'dementia_classifier/data/discourse_trees/dementia/'
+DISCOURSE_CONTROL_DATA_PATH  = 'data/discourse_trees/control/'
+DISCOURSE_DEMENTIA_DATA_PATH = 'data/discourse_trees/dementia/'
 
-DBANK_DATA_PATH   = 'dementia_classifier/data/dementiabank'
-DBANK_PICKLE_PATH = "dementia_classifier/data/dementiabank.pkl"
+DBANK_DATA_PATH   = 'data/dementiabank'
+DBANK_PICKLE_PATH = "data/dementiabank.pkl"
 
-DBANK_AGE_GENDER = 'dementia_classifier/data/dementiabank_info/age_gender.txt'
-DBANK_DIAGNOSIS  = 'dementia_classifier/data/dementiabank_info/diagnosis.txt'
+DBANK_AGE_GENDER = 'data/dementiabank_info/age_gender.txt'
+DBANK_DIAGNOSIS  = 'data/dementiabank_info/diagnosis.txt'
 
-BLOG_CORPUS_PATH = 'dementia_classifier/data/blog_corpus.xml'
-BLOG_PICKLE_PATH = 'dementia_classifier/data/blog_corpus.pkl'
-BLOG_FILTER_PATH = 'dementia_classifier/data/blog_filters/'
+BLOG_CORPUS_PATH = 'data/blog_corpus.xml'
+BLOG_PICKLE_PATH = 'data/blog_corpus.pkl'
+BLOG_FILTER_PATH = 'data/blog_filters/'
 
 SCA_FOLDER   = 'dementia_classifier/lib/SCA/L2SCA/'
 PROJECT_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -43,5 +43,3 @@ BLOG_RESULTS = 'results_blog'
 BLOG_ABLATION_PREFIX = 'results_blog_ablation'
 
 PARSER_MAX_LENGTH = 50
-
-

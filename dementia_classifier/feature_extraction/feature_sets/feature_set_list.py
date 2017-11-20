@@ -639,18 +639,22 @@ def human_readable_map():
         'keywordIUPlaceExterior'           : 'InfoUnit (Count): PlaceExterior',
         'keywordIUSubjectWoman'            : 'InfoUnit (Count): SubjectWoman',
         'proportion_below_threshold_0.3'   : 'proportion of utterance pairs w/ cosine sim < .3',
-        'ls_count'                         : 'Count(LeftSide InfoUnit)',
-        'ls_kw_to_w_ratio'                 : 'Count(LeftSide)/AllWordsUttered',
-        'ls_ty_to_tok_ratio'               : 'Unique(LeftSide)/Count(LeftSide)',
-        'prcnt_ls_uttered'                 : 'Unique(LeftSide)/AllLeftSideInfoUnits',
-        'prcnt_rs_uttered'                 : 'Unique(RightSide)/AllRightSideInfoUnits',
-        'rs_count'                         : 'Count(RightSide InfoUnit)',
-        'rs_kw_to_w_ratio'                 : 'Count(RightSide)/AllWordsUttered',
-        'rs_ty_to_tok_ratio'               : 'Unique(RightSide)/Count(RightSide)',
+        'ls_count'                         : 'Neglect: leftside',
+        'ls_kw_to_w_ratio'                 : 'Focus: leftside',
+        'ls_ty_to_tok_ratio'               : 'Echolalia: leftside',
+        'prcnt_ls_uttered'                 : 'Perceptivity: leftside',
+        'rs_count'                         : 'Neglect: rightside',
+        'rs_kw_to_w_ratio'                 : 'Focus: rightside',
+        'rs_ty_to_tok_ratio'               : 'Echolalia: rightside',
+        'prcnt_rs_uttered'                 : 'Perceptivity: rightside',
         'count_ls_rs_switches'             : 'Number of switches from LS to RS',
     }
     return hr_map
 
+    # neglect
+    # focus
+    # echolalia
+    # perceptivity
 
 def all_groups():
     groups = {}

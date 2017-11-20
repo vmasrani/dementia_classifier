@@ -57,6 +57,8 @@ def save_all_blogs():
             posts = process_blog(data[blog], name)
             df = pd.DataFrame(posts)
             df.to_sql(sqlname, cnx, if_exists='replace', index=False)
+        else:
+            print "%s already in database. Delete it to reprocess features." % sqlname
 
 
 def save_blog_quality():
