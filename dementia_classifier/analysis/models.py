@@ -13,7 +13,6 @@ CLASSIFIERS = {
     "LogReg": LogisticRegression(),
     "KNeighbors": KNeighborsClassifier(),
     "RandomForest": RandomForestClassifier(max_depth=3, n_jobs=1, n_estimators=100),
-    "MLP": MLPClassifier(hidden_layer_sizes=(10,), alpha=10, solver='lbfgs'),
     "GausNaiveBayes": GaussianNB(),
     "SVC": SVC(probability=True),
 }
@@ -72,12 +71,12 @@ BLOG_FEATURE_SETS = [
 ]
 
 BLOG_NAMES = [
-    "living-with-alzhiemers",
-    "parkblog-silverfox",
-    "creatingmemories",
     "journeywithdementia",
     "helpparentsagewell",
     "earlyonset",
+    "living-with-alzhiemers",
+    "parkblog-silverfox",
+    "creatingmemories",
 ]
 
 METRICS = ['acc', 'roc', 'fms']

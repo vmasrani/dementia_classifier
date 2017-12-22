@@ -78,6 +78,7 @@ def get_da_results(classifier_name, domain_adapt_method, metric):
 # =================================================================
 
 def domain_adaptation_plot_helper(classifiers, metric='acc'):
+    print "Plotting domain_adaptation, classifiers: %s" % classifiers
     METHODS = ['target_only', 'source_only', 'relabeled', 'augment', 'coral']
     dfs = []
     for method in METHODS:
@@ -87,6 +88,13 @@ def domain_adaptation_plot_helper(classifiers, metric='acc'):
             dfs.append(df)
 
     dfs = pd.concat(dfs)
+    
+    if metric == 'acc':
+        y_label = "Accuracy"
+    elif metric == 'fms':
+        y_label = "F-Measure"
+    else:
+        y_label = "AUC"
 
     plot_specs = {
         'x_col': 'method',
@@ -96,11 +104,11 @@ def domain_adaptation_plot_helper(classifiers, metric='acc'):
         'figsize': (10, 8),
         'font_scale': 1.2,
         'fontsize': 20,
-        'y_label': metric,
+        'y_label': y_label,
         'y_lim': (0, 1)
     }
 
-    figname = 'domain_adapt_plot_%s_%s.png' % (metric, classifiers[1])
+    figname = 'domain_adapt_plot_%s_%s.pdf' % (metric, classifiers[1])
     bar_plot(dfs, figname, **plot_specs)
 
 
@@ -110,3 +118,5 @@ def good_classifiers_plot(metric='acc'):
 
 def bad_classifiers_plot(metric='acc'):
     domain_adaptation_plot_helper(models.CLASSIFIER_SET_2, metric)
+
+

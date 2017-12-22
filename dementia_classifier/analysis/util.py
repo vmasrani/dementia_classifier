@@ -68,6 +68,8 @@ def bar_plot(dfs, figname, **kwargs):
     errwidth   = kwargs.pop('errwidth', 0.75)
     rotation   = kwargs.pop('rotation', None)
     capsize    = kwargs.pop('capsize', 0.2)
+    tight_layout    = kwargs.pop('tight_layout', False)
+    # legend_loc    = kwargs.pop('legend_loc', None)
 
     if x_col is None:
         raise ValueError("No x_column entered")
@@ -75,40 +77,109 @@ def bar_plot(dfs, figname, **kwargs):
     if y_col is None:
         raise ValueError("No y_column entered")
 
-    # fig, ax = plt.subplots(figsize=figsize)
     sns.set_style('whitegrid')
     sns.set(font_scale=font_scale)
     plt.figure(figsize=figsize)
     if rotation is not None:
         plt.xticks(rotation=rotation)
+
     ax = sns.barplot(x=x_col, y=y_col, hue=hue_col, data=dfs, order=order, palette=colormap(), dodge=dodge, ci=90, errwidth=errwidth, capsize=capsize)
     fig = ax.get_figure()
     ax.set_xlabel(x_label, fontsize=fontsize)
     ax.set_ylabel(y_label, fontsize=fontsize)
     ax.tick_params(labelsize=labelsize)
-    fig.suptitle(title, fontsize=titlesize)
-    fig.tight_layout()
+    ax.legend(prop={'size': 7})
+
+    if 'model' in dfs.columns:
+        name_fix = {
+            'DummyClassifier': "MajorityClass",
+            'SVC': "SVM",
+            'KNeighbors': "KNN",
+        }
+        labels = [name_fix[item.get_text()] if item.get_text() in name_fix else item.get_text() for item in ax.get_xticklabels()]
+        ax.set_xticklabels(labels)
+        for t in ax.legend().texts:
+            if t.get_text() in name_fix:
+                t.set_text(name_fix[t.get_text()])
+
+    # Fix metric labels hack
+    if 'metric' in dfs.columns and len(dfs.metric.unique()) == 3:
+        new_labels = ["Accuracy", "AUC", "F-Measure"]
+        for t, l in zip(ax.legend().texts, new_labels):
+            t.set_text(l)
+
+    fig.suptitle(title, y=.93, fontsize=titlesize)
+    if tight_layout:
+        fig.tight_layout()
     if y_lim is not None:
         plt.ylim(*y_lim)
     if show:
         plt.show()
     else:
-        fig.savefig(PLOT_PATH + figname)
+        fig.savefig(PLOT_PATH + figname, bbox_inches="tight")
 
 
-def feature_selection_plot(dfs, metric, figname='feature_selection.png', show=False):
-    plt.figure(figsize=(12, 8))
+def feature_selection_plot(dfs, metric, figname='feature_selection.pdf', show=False, **kwargs):
+
+    fontsize   = kwargs.pop('fontsize', 20)
+    titlesize  = kwargs.pop('titlesize', 16)
+    figsize    = kwargs.pop('figsize', (12, 8))
+    labelsize  = kwargs.pop('labelsize', 20)
+    title      = kwargs.pop('title', "")
+    x_label    = kwargs.pop('x_label', "")
+    y_label    = kwargs.pop('y_label', "")
+
+    plt.figure(figsize=figsize)
     ax = sns.tsplot(data=dfs, time="number_of_features", value=metric, ci=90, color=colormap(), unit="folds", condition='model')
     fig = ax.get_figure()
-    ax.figure.tight_layout()
-    ax.set_xlabel("Number of Features", fontsize=20)
-    ax.set_ylabel(metric, fontsize=20)
-    ax.tick_params(labelsize=20)
+    ax.set_xlabel(x_label, fontsize=fontsize)
+    ax.set_ylabel(y_label, fontsize=fontsize)
+    ax.tick_params(labelsize=labelsize)
 
+    # Fix model names hack
+    name_fix = {
+        'DummyClassifier': "MajorityClass",
+        'SVC': "SVM",
+        'KNeighbors': "KNN",
+    }
+
+    fig.suptitle(title, y=.93, fontsize=titlesize)
+
+    for t in ax.legend().texts:
+        if t.get_text() in name_fix:
+            t.set_text(name_fix[t.get_text()])
+    
     if show:
         plt.show()
     else:
-        fig.savefig(PLOT_PATH + figname)
+        fig.savefig(PLOT_PATH + figname, bbox_inches="tight")
+
+
+def box_plot(df, figname, **kwargs):
+    x = kwargs.pop('x', None)
+    feature = kwargs.pop('y', None)
+    y_lim   = kwargs.pop('y_lim', None)
+    fontsize   = kwargs.pop('fontsize', 30)
+    labelsize   = kwargs.pop('labelsize', 30)
+    palette = kwargs.pop('palette', sns.xkcd_palette(["steel blue", "brick"]))
+    title   = kwargs.pop('title', "")
+    
+    ylabel  = make_human_readable_features(feature)
+
+    sns.set_style('whitegrid')
+    plt.figure(figsize=(10, 8))
+    plt.xticks(rotation=25)
+    ax  = sns.boxplot(x=x, y=feature, data=df, palette=palette, linewidth=.75)
+    fig = ax.get_figure()
+    if y_lim is not None:
+        plt.ylim(*y_lim)
+    ax.set_xlabel(x, fontsize=fontsize)
+    ax.set_ylabel(ylabel, fontsize=fontsize)
+    fig.suptitle(title, y=.93, fontsize=fontsize)
+    ax.tick_params(labelsize=labelsize)
+
+    fig.tight_layout()
+    fig.savefig(PLOT_PATH + figname)
 
 
 def print_ci_from_df(df, model, metric):
@@ -130,6 +201,16 @@ def get_max_fold(df):
     df.columns = ['folds']
     df['max_k'] = int(max_k)
     return df.reset_index(drop=True)
+
+
+def get_max_fold_from_table(metric, table, model="LogReg"):
+    nfs = pd.read_sql_table(table, cnx, index_col='index')
+    nfs = nfs[(nfs.metric == metric) & (nfs.model == model)].dropna(axis=1)
+    max_ref_k = nfs.mean().argmax()
+    nfs = nfs[max_ref_k].to_frame().reset_index(drop=True)
+    nfs.columns = ['folds']
+    nfs = nfs * 100.0
+    return nfs
 
 
 def blog_feature_ablation(key):
@@ -185,7 +266,6 @@ def ablation_dataset_helper(key):
 
 def new_features_dataset_helper(key, polynomial_terms=True):
     to_drop = feature_set_list.new_features()
-    # to_drop += ["count_ls_rs_switches"]
     if key == "strips":
         new_feature_set = feature_set_list.strips_features()
         to_drop = [f for f in to_drop if f not in new_feature_set]

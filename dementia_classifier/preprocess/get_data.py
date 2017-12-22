@@ -175,10 +175,5 @@ def get_blog_quality():
     return quality
 
 
-def debug():
-    data = _parse_dementiabank('dementia_classifier/data/test/dementia')
-    return data
-
-
 if __name__ == '__main__':
     parse_blogs()

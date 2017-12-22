@@ -338,32 +338,3 @@ if __name__ == '__main__':
     features = []
     for interview in test_set:
         features.append(get_all_CFG_features(interview))
-
-    # thread = start_stanford_server() # Start the server
-    #trees = get_parse_tree('The quick brown fox jumped over the lazy dog. I wore the black hat to school.')
-    #node = build_tree(trees[0])
-    # thread.stop_server()
-
-    #root = build_tree('u(ROOT\n  (S\n    (NP (DT The) (JJ quick) (JJ brown) (NN fox))\n    (VP (VBD jumped)\n      (PP (IN over)\n        (NP (DT the) (JJ lazy) (NN dog))))\n    (. .)))')
-    # process dbank control
-
-        #get_structure_features('stanford/processed/dbank/control', 'dbank/control_SCA')
-    # process dbank dementia
-    #get_structure_features('stanford/processed/dbank/dementia', 'dbank/dementia_SCA')
-    # print "Starting server"
-    # thread = start_stanford_server() # Start the server
-    # try:
-    #     tree = get_parse_tree('The quick brown fox jumped over the lazy dog.')
-    #     root = build_tree(tree)
-    #     print get_VP_2_AUX(tree_node)
-    #     build_tree('u(ROOT\n  (S\n    (NP (DT The) (JJ quick) (JJ brown) (NN fox))\n    (VP (VBD jumped)\n      (PP (IN over)\n        (NP (DT the) (JJ lazy) (NN dog))))\n    (. .)))')
-    # except Exception as e:
-    #     print(e)
-    # finally:
-    #     print "Stopping server"
-    #     thread.stop_server()
-
-    # ------------------------
-    # Must start server by from commandline using:
-    # java -Xmx4g -cp "stanford/stanford-corenlp-full-2015-12-09/*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000
-    # ------------------------

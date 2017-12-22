@@ -1,8 +1,7 @@
 import pandas as pd
 from sqlalchemy import types
-from cross_validators import BlogCV
 import seaborn as sns
-import matplotlib.pyplot as plt
+from cross_validators import BlogCV
 from dementia_classifier.feature_extraction.feature_sets import feature_set_list
 from dementia_classifier.analysis import data_handler
 from dementia_classifier.analysis.feature_set import save_models_to_sql_helper, get_ablation_results
@@ -104,6 +103,7 @@ def get_blog_feature(feature):
 
 
 def blog_plot():
+    print "Plotting blog_plot"
     metrics = models.METRICS
     dfs = []
     for classifier in models.CLASSIFIER_KEYS:
@@ -122,48 +122,81 @@ def blog_plot():
         'y_label': 'Performance',
         'font_scale': 1.2,
         'fontsize': 20,
+        'rotation': 15
     }
 
-    figname = 'blog_plot.png'
+    figname = 'blog_plot.pdf'
 
     bar_plot(dfs, figname, **plot_specs)
 
 
 def plot_blog_feature_selection_curve(show=False, metric='fms'):
-    dfs = []
-    classifiers = models.CLASSIFIER_KEYS
-    for classifier in classifiers:
-        df = get_feature_selection_curve(classifier, metric, table_name='results_blog')
-        dfs.append(df)
-    dfs = pd.concat(dfs)
-    figname = 'blog_feature_selection_%s.png' % metric
-    feature_selection_plot(dfs, metric,figname=figname, show=show)
+    print "Plotting plot_blog_feature_selection_curve, metric: %s" % metric
+    firsthalf = ['DummyClassifier', 'LogReg', 'KNeighbors']
+    secondhalf = ['DummyClassifier', 'RandomForest', 'GausNaiveBayes', 'SVC']
+
+    if metric == 'acc':
+        y_label = "Accuracy"
+    elif metric == 'fms':
+        y_label = "F-Measure"
+    else:
+        y_label = "AUC"
+   
+    plot_specs = {
+        "title": "Feature Selection Curve",
+        'x_label': 'Number of Features',
+        'y_label': y_label,
+    }
+
+    for idx, half in enumerate((firsthalf, secondhalf)):
+        dfs = []
+        for classifier in half:
+            df = get_feature_selection_curve(classifier, metric, table_name='results_blog')
+            dfs.append(df)
+        dfs = pd.concat(dfs)
+        if idx == 1:
+            plot_specs['title'] = ""
+        figname = 'blog_feature_selection_%s_%i.pdf' % (metric, idx)
+        feature_selection_plot(dfs, metric, figname=figname, show=show, **plot_specs)
 
 
-def feature_box_plot(feature, trim_zeros=False):
-
+def blog_feature_box_plot(feature, trim_zeros=False, y_lim=None):
+    print "Plotting blog_feature_box_plot, feature %s" % feature
     df = get_blog_feature(feature)
-    
     if trim_zeros:
         df = df[df[feature] > 0]
     
-    sns.set_style('whitegrid')
+    figname = 'blog_boxplot_%s.pdf' % feature
 
-    plt.figure(figsize=(10, 8))
-    plt.xticks(rotation=25)
-    ax  = sns.boxplot(x='blog', y=feature, data=df, linewidth=.75)
-    fig = ax.get_figure()
-    ax.set_xlabel("Blogs", fontsize=20)
-    ax.set_ylabel(feature, fontsize=20)
-    ax.tick_params(labelsize=20)
+    dem_blogs = [
+        "living-with-alzhiemers",
+        "parkblog-silverfox",
+        "creatingmemories"
+    ]
+    
+    ctrl_blogs = [
+        "journeywithdementia",
+        "helpparentsagewell",
+        "earlyonset",
+    ]
+    
+    pal = sns.xkcd_palette(["brick", "steel blue"])
+    my_pal = {blog: pal[0] if blog in dem_blogs else pal[1] for blog in dem_blogs + ctrl_blogs}
 
-    fig.tight_layout()
-    figname = 'blog_boxplot_%s.png' % feature
-    fig.savefig(PLOT_PATH + figname)
+    plot_specs = {
+        'x': 'blog',
+        'y': feature,
+        'palette': my_pal,
+        'y_lim': y_lim,
+        'fontsize': 30,
+        'labelsize': 20,
+    }
 
+    util.box_plot(df, figname, **plot_specs)
 
 
 def blog_ablation_plot(metric='acc'):
+    print "Plotting blog_ablation_plot, metric: %s" % metric
     classifiers = models.CLASSIFIER_KEYS
     ablation_sets = models.BLOG_FEATURE_SETS
 
@@ -179,24 +212,33 @@ def blog_ablation_plot(metric='acc'):
 
     dfs = pd.concat(dfs)
 
+    human_readable = {"acc": "Accuracy", "fms": "F-Measure", "roc": "AUC"}
+
     plot_specs = {
         'x_col': 'ablation_set',
         'y_col': 'folds',
         'hue_col': 'model',
-        'x_label': 'Model',
-        'y_label': "%% change in %s" % metric,
-        'y_lim': None
+        'x_label': 'Feature Set',
+        'y_label': "Change in %s " % human_readable[metric],
+        'title': "Feature Ablation",
+        'figsize': (10, 8),
+        'fontsize': 20,
+        'font_scale': 1.2,
+        'y_lim': None,
+        'errwidth': 0.75,
+        'labelsize': 10,
+        'rotation': 15
     }
 
-    figname = 'blog_ablation_plot.png'
+    figname = 'blog_ablation_plot.pdf'
 
     bar_plot(dfs, figname, **plot_specs)
 
 
 def plot_blog_feature_rank(show=False):
+    print "Plotting plot_blog_feature_rank"
     dfs = get_blog_feature_rankings()
-    order = dfs[['feature', 'group']].drop_duplicates().sort_values('group')['feature']
-
+    order = dfs[['feature', 'weight', 'group']].groupby(['feature', 'group'])['weight'].mean().reset_index().sort_values(['group', 'weight'], ascending=[True, False])['feature']
     plot_specs = {
         'x_col': 'weight',
         'y_col': 'feature',
@@ -205,13 +247,13 @@ def plot_blog_feature_rank(show=False):
         'y_label': 'Feature Sets',
         'order': order,
         'dodge': False,
-        'labelsize': 5,
-        'figsize': (11, 8),
+        'labelsize': 8,
+        'figsize': (8, 11),
         'show': show,
         'y_lim': None,
         'capsize': .2,
 
     }
 
-    figname = 'blog_feature_rank.png'
+    figname = 'blog_feature_rank.pdf'
     bar_plot(dfs, figname, **plot_specs)

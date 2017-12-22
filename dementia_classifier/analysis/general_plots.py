@@ -1,10 +1,7 @@
 import pandas as pd
 from sqlalchemy import types
-import matplotlib.pyplot as plt
 from cross_validators import DementiaCV, BlogCV
 from dementia_classifier.settings import ABLATION_RESULTS_PREFIX, NEW_FEATURES_RESULTS_PREFIX
-from dementia_classifier.analysis import data_handler
-import seaborn as sns
 import util
 import models
 from util import bar_plot, new_features_dataset_helper, feature_selection_plot
@@ -97,11 +94,11 @@ def get_feature_selection_curve(model, metric, table_name="results_new_features_
 
 
 def vanilla_feature_set_plot(show=False):
-    metrics = ["acc", "fms", "roc"]
+    print "Plotting vanilla_feature_set_plot"
     dfs = []
     classifiers = models.CLASSIFIER_KEYS
     for classifier in classifiers:
-        for metric in metrics:
+        for metric in models.METRICS:
             df = get_vanilla_results(classifier, metric)
             util.print_ci_from_df(df['folds'], classifier, metric)
             dfs.append(df)
@@ -113,7 +110,7 @@ def vanilla_feature_set_plot(show=False):
         'y_col': 'folds',
         'hue_col': 'metric',
         'x_label': 'Model',
-        'y_label': 'Metric',
+        'y_label': 'Performance',
         'figsize': (12, 10),
         'font_scale': 1.2,
         'fontsize': 20,
@@ -122,39 +119,49 @@ def vanilla_feature_set_plot(show=False):
         'title': "10-Fold Cross Validation Performance"
     }
 
-    figname = 'vanilla_results.png'
+    figname = 'vanilla_results.pdf'
     bar_plot(dfs, figname, **plot_specs)
 
 
 def plot_feature_rank(dataset, show=False):
+    print "Plotting plot_feature_rank, dataset: %s" % dataset
     dfs = get_feature_rankings(dataset=dataset, polynomial_terms=False)
-    order = dfs[['feature', 'group']].drop_duplicates().sort_values('group')['feature']
-
+    order = dfs[['feature', 'weight', 'group']].groupby(['feature', 'group'])['weight'].mean().reset_index().sort_values(['group', 'weight'], ascending=[True, False])['feature']
     plot_specs = {
         'x_col': 'weight',
         'y_col': 'feature',
         'hue_col': 'group',
-        'x_label': 'Feature Score',
-        'y_label': 'Feature Sets',
+        'x_label': 'Score',
+        'y_label': 'Feature',
         'order': order,
         'dodge': False,
-        'labelsize': 5,
-        'font_scale': 1.2,
-        'fontsize': 20,
+        'labelsize': 8,
+        'figsize': (8, 11),
+        'font_scale': 0.8,
+        'fontsize': 14,
         'show': show,
         'y_lim': None,
         'capsize': .2,
+        'title': "Feature Importance",
     }
 
-    figname = 'feature_rank_%s.png' % dataset
+    figname = 'feature_rank_%s.pdf' % dataset
     bar_plot(dfs, figname, **plot_specs)
 
 
 def plot_feature_selection_curve(show=False, metric='fms'):
+    print "Plotting plot_feature_selection_curve, metric %s" % metric
     dfs = []
     classifiers = models.CLASSIFIER_KEYS
     for classifier in classifiers:
         df = get_feature_selection_curve(classifier, metric)
         dfs.append(df)
     dfs = pd.concat(dfs)
-    feature_selection_plot(dfs, metric, show=show)
+    
+    plot_specs = {
+        "title": "Feature Selection Curve",
+        'x_label': 'Number of Features',
+        'y_label': 'F-Measure',
+
+    }
+    feature_selection_plot(dfs, metric, show=show, **plot_specs)

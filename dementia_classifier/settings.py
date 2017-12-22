@@ -18,8 +18,9 @@ BLOG_PICKLE_PATH = 'data/blog_corpus.pkl'
 BLOG_FILTER_PATH = 'data/blog_filters/'
 
 SCA_FOLDER   = 'dementia_classifier/lib/SCA/L2SCA/'
-PROJECT_PATH = os.path.dirname(os.path.realpath(__file__))
-PLOT_PATH    = os.path.join(PROJECT_PATH, 'plots/')
+PLOT_PATH    = 'plots/'
+# PROJECT_PATH = os.path.dirname(os.path.realpath(__file__))
+# PLOT_PATH    = os.path.join(PROJECT_PATH, 'plots/')
 # =================================================================
 # ----------------------# SQL Table name---------------------------
 # =================================================================

@@ -576,9 +576,9 @@ def general_keyword_type_to_token_ratio(interview, keyword_set):
         return len(set(keywords)) / float(len(keywords))
 
 
-#=====================================
+# =====================================
 # Feature sets
-#=====================================
+# =====================================
 def get_keyword_set():
     return BOY + GIRL + WOMAN + KITCHEN + EXTERIOR + COOKIE + JAR + STOOL + SINK + PLATE + DISHCLOTH + WATER + WINDOW + CUPBOARD + DISHES + CURTAINS + STEAL + FALL + WASH + OVERFLOW
 

@@ -43,12 +43,6 @@ def save_dementiabank_text_features():
     feat_df.to_sql(SQL_DBANK_TEXT_FEATURES, cnx, if_exists='replace', index=False)
 
 
-def debug():
-    data = get_data.debug()
-    featdict = pos_syntactic.get_all(data.values()[0])
-    pass
-
-
 def save_diagnosis():
     diagnosis = pd.read_csv(settings.DBANK_DIAGNOSIS, sep=' ')
     diagnosis.to_sql(SQL_DBANK_DIAGNOSIS, cnx, if_exists='replace', index=False)

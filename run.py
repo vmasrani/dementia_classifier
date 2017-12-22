@@ -17,17 +17,17 @@ def save_all_results():
     print "Saving: save_ablation_results_to_sql()"
     print "-----------------------------------------"
     feature_set.save_ablation_results_to_sql()
-    
+
     print "-----------------------------------------"
     print "Saving: save_domain_adapt_results_to_sql()"
     print "-----------------------------------------"
     domain_adapt.save_domain_adapt_results_to_sql()
-    
+
     print "-----------------------------------------"
     print "Saving: save_blog_results_to_sql()"
     print "-----------------------------------------"
     blog.save_blog_results_to_sql()
-    
+
     print "-----------------------------------------"
     print "Saving: save_blog_ablation_results_to_sql()"
     print "-----------------------------------------"
@@ -35,29 +35,60 @@ def save_all_results():
 
 
 def save_all_plots():
-    general_plots.vanilla_feature_set_plot()
+    # Baselines
     general_plots.plot_feature_selection_curve()
+    general_plots.vanilla_feature_set_plot()
+    feature_set.ablation_plot(metric="fms")
     general_plots.plot_feature_rank('none')
+
+    # New features
+    feature_set.new_feature_set_plot(metric='fms', absolute=True)
+    feature_set.new_feature_set_plot(metric='fms', absolute=False, poly=True)
+    feature_set.new_feature_set_plot(metric='fms', absolute=False, poly=False)
     general_plots.plot_feature_rank('halves')
 
-    feature_set.ablation_plot(metric='fms')
-    feature_set.new_feature_set_plot(metric='fms', absolute=True)
-    feature_set.new_feature_set_plot(metric='fms', absolute=False)
+    # New feature boxplots
+    feature_set.feature_box_plot("MeanWordLength")
+    feature_set.feature_box_plot("NP_to_PRP")
+    feature_set.feature_box_plot("age")
+    feature_set.feature_box_plot("prcnt_rs_uttered")
+    feature_set.feature_box_plot("getImagabilityScore")
 
+    # New feature appendix
+    feature_set.new_feature_set_plot(metric='fms', absolute=False, poly=False)
+    feature_set.new_feature_set_plot(metric='acc', absolute=True)
+    feature_set.new_feature_set_plot(metric='acc', absolute=False, poly=True)
+    feature_set.new_feature_set_plot(metric='roc', absolute=True)
+    feature_set.new_feature_set_plot(metric='roc', absolute=False, poly=True)
+    feature_set.ablation_plot(metric="acc")
+    feature_set.ablation_plot(metric="roc")
+
+    # Domain adaptation
     domain_adapt.good_classifiers_plot(metric='fms')
     domain_adapt.bad_classifiers_plot(metric='fms')
-    
+
+    # Domain adaptation appendix
+    domain_adapt.good_classifiers_plot(metric='acc')
+    domain_adapt.bad_classifiers_plot(metric='acc')
+
+    # Blog
+    blog.plot_blog_feature_selection_curve(metric='roc')
     blog.blog_plot()
-    blog.plot_blog_feature_selection_curve()
-    blog.feature_box_plot('getAoaScore')
-    blog.feature_box_plot('getConcretenessScore')
-    blog.feature_box_plot('getImagabilityScore')
-    blog.feature_box_plot('getSUBTLWordScores')
+    blog.blog_ablation_plot()
+    blog.plot_blog_feature_rank()
+
+    # Blog boxplot
+    blog.blog_feature_box_plot('S')
+    blog.blog_feature_box_plot('NP_to_PRP')
+    blog.blog_feature_box_plot('MeanWordLength')
+    blog.blog_feature_box_plot('getSUBTLWordScores')
 
 
 def main():
     save_features_to_database()
     save_all_results()
     save_all_plots()
-    
-main()
+
+
+if __name__ == '__main__':
+    main()

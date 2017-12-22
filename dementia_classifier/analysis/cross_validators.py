@@ -4,7 +4,7 @@ from scipy import stats
 from dementia_classifier.analysis import util
 from sklearn.utils import shuffle
 from sklearn.model_selection import GroupKFold
-from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
+from sklearn.metrics import f1_score, accuracy_score, roc_auc_score, precision_score, recall_score
 from scipy.cluster.vq import whiten
 from sklearn.dummy import DummyClassifier
 

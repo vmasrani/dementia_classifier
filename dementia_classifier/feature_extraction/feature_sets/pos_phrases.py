@@ -652,10 +652,7 @@ def get_all(interview):
     features["NumberOfNID"] = sum([getNumberOfNID(utterance) for utterance in interview]) / len(interview)
     features["MeanWordLength"] = sum([getMeanWordLength(utterance) for utterance in interview]) / len(interview)
     features["TotalNumberOfWords"] = sum([getTotalNumberOfWords(utterance) for utterance in interview]) / len(interview)
-    features["DisfluencyFrequency"] = sum([getDisfluencyFrequency(utterance)
-                                           for utterance in interview]) / len(interview)
-    features["MeanLengthOfSentence"] = sum([getMeanLengthOfSentence(utterance)
-                                            for utterance in interview]) / len(interview)
+    features["DisfluencyFrequency"] = sum([getDisfluencyFrequency(utterance) for utterance in interview]) / len(interview)
 
     # Phrase features/len(interview)
     features["NumAdverbs"] = sum([getNumAdverbs(utterance) for utterance in interview]) / len(interview)

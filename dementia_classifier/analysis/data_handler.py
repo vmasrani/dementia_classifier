@@ -89,8 +89,6 @@ def make_polynomial_terms(data, cols):
             prefix = 'intr_'
         data[prefix + f1 + "_" + f2] = data[f1] * data[f2]
 
-    data = data.drop(cols, axis=1, errors='ignore')
-
     return data
 
 

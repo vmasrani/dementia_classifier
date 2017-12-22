@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 
 _connection = None
 
+
 def get_connection():
     global _connection
     if not _connection:
