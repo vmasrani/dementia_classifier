@@ -4,6 +4,7 @@ Code for my masters thesis. To run:
     -  Place data alongside run.py.
     -  Place lib within dementia_classifier/ 
 - Install python requirements (may want to use a virtualenv)
+- Note: May need to install the 'stopwords' and 'punkt' package for the NLTK python package. 
 - Make sure sql is installed on your system and create a database with the appropriate permissions to store the processed data and results. Modify dementia_classifier/db.py with the appropriate user, password, and database name.
 - Start the stanford parser with:
     ```bash

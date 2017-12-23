@@ -3,17 +3,8 @@ import sys
 import scipy.io.wavfile as wav
 import scipy.stats.stats as st
 import numpy as np
-
-try:
-    from features import mfcc
-    from features import logfbank
-except ImportError as e:
-    print str(e)
-    sys.exit("""
-    Requires python_speech_features library (not available on pip)
-    https://github.com/jameslyons/python_speech_features
-    """)
-
+from python_speech_features import mfcc
+from python_speech_features import logfbank
 
 def get_mean_var_skew_kurt(np_array):
     return {"mean": np_array.mean(),
