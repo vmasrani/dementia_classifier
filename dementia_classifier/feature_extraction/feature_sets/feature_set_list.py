@@ -432,7 +432,7 @@ def halves_features():
         "rs_count",
         "rs_kw_to_w_ratio",
         "rs_ty_to_tok_ratio",
-        "count_ls_rs_switches"
+        # "count_ls_rs_switches"
     ]
 
 

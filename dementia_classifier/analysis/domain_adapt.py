@@ -21,7 +21,7 @@ def save_domain_adapt_results_to_sql():
     Xt, yt, Xs, ys = data_handler.get_target_source_data()
     for model in models.CLASSIFIERS:
         print 'Running %s' % model
-        da = DomainAdaptationCV(models.CLASSIFIERS_NEW[model], Xt, yt, Xs, ys)
+        da = DomainAdaptationCV(models.CLASSIFIERS[model], Xt, yt, Xs, ys)
         da.train_all()
         save_domain_adapt_to_sql_helper(da, model)
 

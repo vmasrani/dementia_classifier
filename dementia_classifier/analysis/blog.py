@@ -25,7 +25,7 @@ cnx = db.get_connection()
 
 def save_blog_results_to_sql():
     X, y, labels = data_handler.get_blog_data()
-    classifiers = models.CLASSIFIERS_NEW
+    classifiers = models.CLASSIFIERS
     trained_models = {model: BlogCV(classifiers[model], X=X, y=y, labels=labels).train_model('default') for model in classifiers}
     save_blogs_to_sql_helper(trained_models, if_exists='append')
 

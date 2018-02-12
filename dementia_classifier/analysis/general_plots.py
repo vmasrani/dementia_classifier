@@ -20,7 +20,7 @@ cnx = db.get_connection()
 # Ablation study
 
 def save_model_to_sql(model_name):
-    model = util.CLASSIFIERS_NEW[model_name]
+    model = models.CLASSIFIERS[model_name]
     X, y, labels = util.ablation_dataset_helper('none')
     cv = DementiaCV(model, X=X, y=y, labels=labels).train_model('default', k_range=range(1, 150))
     save_model_to_sql_helper(cv, model_name, '%s_standard_features' % model_name)

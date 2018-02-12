@@ -15,3 +15,14 @@ Code for my masters thesis. To run:
   python run.py
   ```
 
+
+## Troubleshooting
+Error: "RuntimeError: Python is not installed as a framework. The Mac OS X backend will not be able to function correctly if Python is not installed as a framework. See the Python documentation for more information on installing Python as a framework on Mac OS X. Please either reinstall Python as a framework, or try one of the other backends. If you are using (Ana)Conda please install python.app and replace the use of 'python' with 'pythonw'. See 'Working with Matplotlib on OSX' in the Matplotlib FAQ for more information.
+"
+See: https://stackoverflow.com/questions/21784641/installation-issue-with-matplotlib-python
+
+Error: "ValueError: invalid literal for int() with base 10: 'sh: dementia_classifier/lib/SCA/L2SCA/./tregex.sh: Permission denied'"
+
+Check permissions for tregex.sh:
+
+chmod 755 dementia_classifier/lib/SCA/L2SCA/tregex.sh

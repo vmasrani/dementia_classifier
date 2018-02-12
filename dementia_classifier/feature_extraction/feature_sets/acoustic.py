@@ -3,8 +3,8 @@ import sys
 import scipy.io.wavfile as wav
 import scipy.stats.stats as st
 import numpy as np
-from python_speech_features import mfcc
-from python_speech_features import logfbank
+# from python_speech_features import mfcc
+# from python_speech_features import logfbank
 
 def get_mean_var_skew_kurt(np_array):
     return {"mean": np_array.mean(),
@@ -80,4 +80,4 @@ def get_all(path):
 
 
 if __name__ == '__main__':
-    get_all("../../data/soundfiles/control")
+    get_all("../data/soundfiles/control")
