@@ -42,7 +42,8 @@ def save_all_plots():
     general_plots.plot_feature_rank('none')
 
     # New features
-    feature_set.new_feature_set_plot(metric='fms', absolute=True)
+    feature_set.new_feature_set_plot(metric='fms', absolute=True,  poly=False)
+    feature_set.new_feature_set_plot(metric='fms', absolute=True,  poly=True)
     feature_set.new_feature_set_plot(metric='fms', absolute=False, poly=True)
     feature_set.new_feature_set_plot(metric='fms', absolute=False, poly=False)
     general_plots.plot_feature_rank('halves')
