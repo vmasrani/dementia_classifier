@@ -1,6 +1,7 @@
 # dementia_classifier
 Code for my masters thesis. To run: 
-- Request the missing data + lib directory from vadmas@gmail.com (too large to store on github) 
+- Request access to the [DementiaBank dataset](https://dementia.talkbank.org) from either Davida Fromm: fromm@andrew.cmu.edu or Brian MacWhinney: macw@cmu.edu  
+- Once you have permission, email me at vadmas@cs.ubc.ca to get a copy of the preprocessed dataset.
     -  Place data alongside run.py.
     -  Place lib within dementia_classifier/ 
 - Install python requirements (may want to use a virtualenv)
