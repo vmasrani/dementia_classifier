@@ -1,5 +1,10 @@
 # dementia_classifier
-Code for my masters thesis. To run: 
+Code for my masters thesis, which contains the work from the following publications:
+- Masrani, V., Murray, G., Field, T. S., & Carenini, G. (2017). Domain adaptation for detecting mild cognitive impairment. In Canadian Conference on Artificial Intelligence (pp. 248–259). Springer, Cham.
+- Masrani, V., Murray, G., Field, T., & Carenini, G. (2017). Detecting dementia through retrospective analysis of routine blog posts by bloggers with dementia. In BioNLP 2017 (pp. 232–237).
+- Field, T. S., Masrani, V., Murray, G., & Carenini, G. (2017). Improving Diagnostic Accuracy Of Alzheimer S Disease From Speech Analysis Using Markers Of Hemispatial Neglect. Alzheimer’s & Dementia: The Journal of the Alzheimer’s Association, 13(7), P157–P158.
+
+. To run: 
 - Request access to the [DementiaBank dataset](https://dementia.talkbank.org) from either Davida Fromm: fromm@andrew.cmu.edu or Brian MacWhinney: macw@cmu.edu  
 - Once you have permission, email me at vadmas@cs.ubc.ca to get a copy of the preprocessed dataset.
     -  Place data alongside run.py.
